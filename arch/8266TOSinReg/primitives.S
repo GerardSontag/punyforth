@@ -162,38 +162,40 @@ defprimitive "lshift",6,lshift,REGULAR
 
 defprimitive "rshift",6,rshift,REGULAR
     DPOP      a9
-    READTOS1 a9
-    ssr a8
-    srl a8, a9
-    WRTETOS1 a8
+ 
+    ssr       a2
+    srl       a2, a9
+  
     NEXT
 
 .literal_position
 defprimitive "_emit",5,uemit,REGULAR
-    DPOP a2
-    CCALL forth_putchar
+   
+    CCALL      forth_putchar
+    DPOP       a2
     NEXT    
 
 defprimitive "abort",5,abort,REGULAR
-    CCALL forth_abort
+    CCALL      forth_abort
     NEXT
 
 defprimitive "@",1,fetch,REGULAR
-    READTOS1 a8
-    l32i a9, a8, 0
-    WRTETOS1 a9
+
+    l32i       a2, a2, 0
+
     NEXT
 
 defprimitive "c@",2,fetchbyte,REGULAR
-    READTOS1 a8
-    l8ui a9, a8, 0
-    WRTETOS1 a9
+
+    l8ui       a2, a2, 0
+
     NEXT
 
 defprimitive "!",1,store,REGULAR
-    DPOP a8
-    DPOP a9
-    s32i a9, a8, 0
+ 
+    DPOP       a9
+    s32i       a9, a2, 0
+    DPOP       a2
     NEXT
 
 defprimitive "c!",2,storebyte,REGULAR
