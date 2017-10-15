@@ -63,7 +63,7 @@ defprimitive "swap",4,swap,REGULAR /* ( a b -- b a ) */
     READTOS1  a8
     
     WRTETOS1  a2
-    move      a2,a8
+    move.n    a2,a8
     NEXT
 
 defprimitive "rot",3,rot,REGULAR /* ( a b c -- b c a ) */    
