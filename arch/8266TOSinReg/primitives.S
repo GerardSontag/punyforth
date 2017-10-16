@@ -199,15 +199,16 @@ defprimitive "!",1,store,REGULAR
     NEXT
 
 defprimitive "c!",2,storebyte,REGULAR
-    DPOP a8
-    DPOP a9
-    s8i a9, a8, 0
+    
+    DPOP       a9
+    s8i        a9, a2, 0
+    DPOP       a2
     NEXT
 
 defprimitive "[']",3,btick,REGULAR    // compile only
-    l32i a8, a14, 0
-    addi a14, a14, CELLS
-    DPUSH a8
+    DPUSH      a2
+    l32i       a2, a14, 0
+    addi       a14, a14, CELLS
     NEXT
 
 defprimitive "<",1,lt,REGULAR         // only need to define this, all other comparisions are implemented in terms of lt
@@ -220,8 +221,8 @@ L4: WRTETOS1 a10
     NEXT
 
 defprimitive "branch",6,branch,REGULAR
-    l32i a8, a14, 0                 // read relative address as the next instruction
-    add a14, a14, a8                // advance forth PC
+    l32i        a8, a14, 0           // read relative address as the next instruction
+    add         a14, a14, a8         // advance forth PC
     NEXT
 
 defprimitive "branch0",7,branch0,REGULAR
@@ -231,51 +232,60 @@ defprimitive "branch0",7,branch0,REGULAR
     NEXT
 
 defprimitive ">r",2,rpush,REGULAR
-    DPOP a8
-    RPUSH a8
+ 
+    RPUSH       a2
+    DPOP        a2
     NEXT
 
 defprimitive "r>",2,rpop,REGULAR
-    RPOP a8
-    DPUSH a8
+    DPUSH       a2
+    RPOP        a2
+   
     NEXT
 
 defprimitive "i",1,i,REGULAR
-    l32i a8, a13, 0
-    DPUSH a8
+    DPUSH       a2
+    l32i        a2, a13, 0
+    
     NEXT
 
 defprimitive "j",1,j,REGULAR
-    l32i a8, a13, 2*CELLS
-    DPUSH a8
+    DPUSH       a2
+    l32i        a2, a13, 2*CELLS
+
     NEXT
 
 defprimitive "execute",7,execute,REGULAR    
-    DPOP a8                             // xt
-    l32i a9, a8, 0                      // fetch codeword the same way as the inner interpreter does
-    jx a9  
+                                     // xt is in a2
+    l32i        a9, a2, 0            // fetch codeword the same way as the inner interpreter does
+    DPOP        a2
+    jx          a9  
 
 defprimitive "exit",4,exit,REGULAR
-    RPOP a14                            // pop forth PC from the return stack
+    RPOP        a14                     // pop forth PC from the return stack
     NEXT
 
 defprimitive "sp@",3,spat,REGULAR
-    mov a8, a15
-    DPUSH a8
+    DPUSH       a2
+    mov         a2, a15
+
     NEXT
 
 defprimitive "sp!",3,spstore,REGULAR
-    DPOP a8
-    mov a15, a8
+
+    mov         a15, a2
+    DPOP        a2
     NEXT
 
 defprimitive "rp@",3,rpat,REGULAR
-    DPUSH a13
+    DPUSH       a2
+    mov         a2,a13
     NEXT
 
 defprimitive "rp!",3,rpstore,REGULAR
-    DPOP a8
-    mov a13, a8
+  
+    mov         a13, a2
+    DPOP        a2
     NEXT
 
 // Different types of code words
@@ -284,24 +294,27 @@ defprimitive "rp!",3,rpstore,REGULAR
 .align 4
 
 ENTERCOL:                       // codeword for word (colon) definitions
-    RPUSH a14                   // save program counter before entering the word
-    addi a14, a8, CELLS         // a8 points to the ENTERCOL, skip this cell    
+    RPUSH       a14             // save program counter before entering the word
+    addi        a14, a8, CELLS  // a8 points to the ENTERCOL, skip this cell    
     NEXT
 
 ENTERDOES:
-    RPUSH a14                   // save program counter before entering the word
-    addi a8, a8, CELLS          // a8 is on the codeword after there is the behaviour pointer
-    l32i a14, a8, 0     // set the FORTH PC to the behaviour
-    addi a8, a8, CELLS          // after the behaviour there is the data
-    DPUSH a8                    // invoke behavour with the data pointer on the stack
-    NEXT
+    DPUSH       a2
+    RPUSH       a14             // save program counter before entering the word
+    addi        a8, a8, CELLS   // a8 is on the codeword after there is the behaviour pointer
+    l32i        a14, a8, 0      // set the FORTH PC to the behaviour
+    addi        a2, a8, CELLS   // after the behaviour there is the data
+    NEXT                        // invoke behavour with the data pointer in a2
+  
 
 ENTERCONST:
-    l32i a8, a8, CELLS
-    DPUSH a8
+    DPUSH       a2
+    l32i        a2, a8, CELLS
+
     NEXT
 
 ENTERVAR:
-    addi a8, a8, CELLS
-    DPUSH a8
+    DPUSH       a2
+    addi        a8, a8, CELLS
+    
     NEXT
